@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 import os
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
+TWITTER_KEY = 'PBYt8dEbvQcwp9tVUCL1D4ST3'
+TWITTER_SECRET = 'Vwqr1ub3gyAyfsdLbrfuuZ7fxArFIWkYlBEwQ8eDWEcFu6U6np'
+LOGIN_URL = '/localhost:8000/login'
+LOGOUT_URL = '/localhost:8000/logout'
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
@@ -36,7 +43,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'chucknorris',
+    'twython',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -67,6 +76,31 @@ DATABASES = {
         'PORT': '',
     }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+AUTHENTICATION_BACKENDS = {
+    'social.backends.facebook.FacebookOAuth2',
+    'social.backends.google.GoogleOAuth2',
+    'social.backends.twitter.TwitterOAuth',
+    'django.contrib.auth.backends.ModelBackend',
+}
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+   'django.contrib.auth.context_processors.auth',
+   'django.core.context_processors.debug',
+   'django.core.context_processors.i18n',
+   'django.core.context_processors.media',
+   'django.core.context_processors.static',
+   'django.core.context_processors.tz',
+   'django.contrib.messages.context_processors.messages',
+   'social.apps.django_app.context_processors.backends',
+   'social.apps.django_app.context_processors.login_redirect',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
