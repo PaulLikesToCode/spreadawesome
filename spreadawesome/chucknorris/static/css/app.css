@@ -38,7 +38,35 @@ div#quote-area div {
 }
 
 div#saved-quotes div ul li {
-    margin-bottom: .5em;
+    margin: 2em;
+}
+
+/*textarea#tweet-textarea {
+    height: 2em;
+    width: 15em;
+}*/
+
+span#submit-tweet {
+    width: 20%;
+    float: right;
+}
+
+img#delete-icon {
+    float: left;
+}
+
+.navbar-default .navbar-nav>.active>a.btn-twitter {
+/*    background-color:  #55ACEE;*/
+    left: 1em;
+    max-width: 14em;
+}
+
+.navbar-default .navbar-nav>.active>a.btn-twitter:hover {
+    background-color:  #55ACEE;
+}
+
+div.footer p a {
+    color: #2c3e50;
 }
 
 .btn-primary {

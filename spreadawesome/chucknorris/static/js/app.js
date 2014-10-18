@@ -1,4 +1,23 @@
-var app = angular.module('chucknorris', ['ngRoute', 'ui.bootstrap']);
+var app = angular.module('chucknorris', ['ngResource', 'ngRoute', 'ui.bootstrap']);
+
+// app.config(['$httpProvider', function($httpProvider) {
+// 	$httpProvider.defaults.xsrfCookieName = 'csrftoken';
+// 	$httpProvider.defaultsxsrfHeaderName = 'X-CSRFToken';
+// }]);
+
+// app.factory('api', function($resource) {
+// 	function add_auth_header(data, headersGetter) {
+// 		var headers = headersGetter();
+// 		headers['Authorization'] = ('Basic ' + btoa(data.username + ':' + data.password));
+// 	}
+// 	return {
+// 		auth: $resource('/api/auth\\/', {}, {
+// 			login: {method: 'POST', transformRequest: add_auth_header},
+// 			logout: {method: 'DELETE'}
+// 		}),
+// 		users: $resource('/api/users\\/', {}, {create: {method:'POST'}})
+// 	};
+// });
 
 app.factory('quotes', [function() {
 	var q = {
@@ -8,12 +27,10 @@ app.factory('quotes', [function() {
 }]);
 
 app.controller('ModalDemoCtrl', function($scope, $modal) {
-
-  $scope.open = function() {
-
-    var modalInstance = $modal.open({
-      templateUrl: 'myModalContent.html',
-    });
+	$scope.open = function() {
+	    var modalInstance = $modal.open({
+	      templateUrl: 'myModalContent.html',
+	    });
 	};
 });
 
@@ -55,11 +72,32 @@ app.controller('getRandomFact', ['$scope', '$http', 'quotes', function($scope, $
 	}
 }]);
 
-app.controller('showQuotes', ['$scope', 'quotes', function($scope, quotes) {
+app.controller('showQuotes', ['$scope', '$http', 'quotes', function($scope, $http, quotes) {
 	$scope.quotes = quotes.quotes;
 	$scope.dynamicTooltip = 'remove';
 	$scope.removeQuote = function(index) {
 		$scope.quotes.splice(index, 1);	
+	}
+
+	$scope.tweetQuote = function(index) {
+		if (typeof localStorage['oauth_token'] === 'undefined') {
+			alert("Please log in to send a tweet");
+		} else {
+			var tweetContent = $scope.quotes[index];
+			var data = {
+				twitter_handle: localStorage['twitter_handle'],
+				message: tweetContent,
+				oauth_token: localStorage['oauth_token'],
+				oauth_token_secret: localStorage['oauth_token_secret'],
+			}
+			$http.post('/send_tweet/', data).
+				success(function(data) {
+					console.log(data.message);
+				}).
+				error(function() {
+					console.log('sorry');
+				});
+		}
 	}
 }]);
 

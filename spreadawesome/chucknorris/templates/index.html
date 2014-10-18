@@ -1,16 +1,19 @@
 <!doctype html>
-<html ng-app="chucknorris">
+<html>
 <head>
 	<meta charset="UTF-8">
 	<title>You Too Can Be Chuck Norris</title>
-	<link href="css/bootstrap.css" rel="stylesheet" type="text/css"></link>
-	<link href="css/app.css" rel="stylesheet" type="text/css"></link>
+	<link href="/static/css/bootstrap.css" rel="stylesheet" type="text/css"></link>
+	<link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+	<link href="/static/css/bootstrap-social.css" rel="stylesheet" type="text/css"></link>
+	<link href="/static/css/app.css" rel="stylesheet" type="text/css"></link>
 	<script type="text/javascript" async src="//platform.twitter.com/widgets.js"></script>
 	<!--script src="js/facebook.js"></script-->
-	<script src="js/angular-updated.js"></script>
-	<script src="js/angular-route.js"></script>
-	<script src="js/ui-bootstrap.js"></script>
-	<script src="js/app.js"></script>
+	<script src="/static/js/angular-updated.js"></script>
+	<script src="/static/js/angular-route.js"></script>
+	<script src="/static/js/angular-resource.js"></script>
+	<script src="/static/js/ui-bootstrap.js"></script>
+	<script src="/static/js/app.js"></script>
 </head>
 <body>
 	<div class="navbar navbar-default">
@@ -21,60 +24,83 @@
 			<a class="navbar-brand" href="">You Too Can Be Chuck Norris</a>
 		</div>
 		<div class="navbar-collapse navbar-responsive-collapse collapse in">
-			<div ng-controller = "ModalDemoCtrl">
-				<script type="text/ng-template" id="myModalContent.html">
-					<div style="text-align:center; margin-left:4px">
-						<div class="modal-header">
-							<h3 class="modal-title">Welcome!</h3>
-						</div>
-						<div class="modal-body" style="text-align:center">
-							<p>We all know the awesome Chuck Norris facts out there. This website lets you puts yourself or a friend in the world of Chuck Norris. Eventually you'll be able to directly post onto Twitter, but this is just the first version. For now, if you see a quote you like, copy it and send out a tweet.</p>
-							<hr/>
-							<p>Thanks to the <a href="http://www.icndb.com">Internet Chuck Norris Database</a> for providing access to the Facts. Special thanks to Master Chuck Norris for being so cool.</p>
-							<hr/>	
-							<p>This site was built by me, Paul Schrage, as a way to have some fun while learning AngularJS. I'm a web developer in San Francisco.</p>
-						</div>
-					</div>
-					</script>
 				<ul class="nav navbar-nav">
-					<li class="active"><a href="#" ng-click="open()">About</a></li>
+					{% if user.is_authenticated %}
+					<li class="active"><a id="user-data" data-username = {{user.username}} data-oauth-token={{oauth_token}} data-oauth-token-secret={{oauth_token_secret}}><!--img src={{ user_icon }} /-->   Welcome {{user.username}}</a></li>
+					<li class="active"><a href="/logout_twitter/" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Logout</a>
+					{% else %}
+					<li class="active"><a href="/login/" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Sign in with Twitter</a>
+					{% endif %}
 				</ul>
-
 			</div>
 		</div>
 	</div>
 	</br>
-	<div ng-controller="getRandomFact" class='col-sm-6 text-center'>
-		<p>
-			<input class="btn btn-primary btn-lg" type="button" ng-click="getChuckQuote()" value="Get a Chuck Norris Quote!" />
-		</p>
-		<p>or</p>
-		<form ng-submit="getCustomQuote()" class="form-horizontal">
-			<div class="col-lg-8 col-lg-offset-2">
-				<p>
-	        		<input class="form-control" ng-model="person.first_name" placeholder="First Name" type="text" required>
-	 				<input class="form-control" type="text" ng-model="person.last_name" placeholder="Last Name" required>
-	 			</p>
- 			</div>
- 			<p>
-				<input class="btn btn-primary btn-lg" type="submit" value="Get a Quote for a Friend!" />
+	<div ng-app="chucknorris">
+	{% verbatim %}
+		<div ng-controller="getRandomFact" class='col-sm-6 text-center'>
+			<p>
+				<input class="btn btn-primary btn-lg" type="button" ng-click="getChuckQuote()" value="Get a Chuck Norris Quote!" />
 			</p>
-		</form>
-		<div id="quote-area">
+			<p>or</p>
+			<form ng-submit="getCustomQuote()" class="form-horizontal">
+				<div class="col-lg-8 col-lg-offset-2">
+					<p>
+		        		<input class="form-control" ng-model="person.first_name" placeholder="First Name" type="text" required>
+		 				<input class="form-control" type="text" ng-model="person.last_name" placeholder="Last Name" required>
+		 			</p>
+	 			</div>
+	 			<p>
+					<input class="btn btn-primary btn-lg" type="submit" value="Get a Quote for a Friend!" />
+				</p>
+			</form>
+			<div id="quote-area">
+				<div>
+					{{ quote }}
+				</div>
+			</div>
 			<div>
-				{{ quote }}
+				<input class="btn btn-primary btn-lg" type="button" ng-click="saveQuote()" value="I Like This One"/>
 			</div>
 		</div>
-		<div>
-			<input class="btn btn-primary btn-lg" type="button" ng-click="saveQuote()" value="I Like This One"/>
+		<div id="saved-quotes" class='col-sm-6 text-center' ng-model="quotes" ng-controller="showQuotes">
+			<h1>Your Quotes</h1>
+			<div>
+				<ul>
+					<li ng-repeat="quote in quotes track by $index"><!--img ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img--><textarea class="form-control" id="tweet-textarea">{{quote}}</textarea><img id="delete-icon" ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img><span id="submit-tweet" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Tweet!</span></br>
+
+						<!--span ng-click="tweetQuote($index)"> tweet! </span--></li>
+				</ul>
+		</div>
+		<div class="footer navbar-fixed-bottom">
+			<script type="text/ng-template" id="myModalContent.html">
+				<div style="text-align:center; margin-left:4px">
+					<div class="modal-header">
+						<h3 class="modal-title">Welcome!</h3>
+					</div>
+					<div class="modal-body" style="text-align:center">
+						<p>We all know the awesome Chuck Norris facts out there. This website lets you puts yourself or a friend in the world of Chuck Norris. Eventually you'll be able to directly post onto Twitter, but this is just the first version. For now, if you see a quote you like, copy it and send out a tweet.</p>
+						<hr/>
+						<p>Thanks to the <a href="http://www.icndb.com">Internet Chuck Norris Database</a> for providing access to the Facts. Special thanks to Master Chuck Norris for being so cool.</p>
+						<hr/>	
+						<p>This site was built by me, Paul Schrage, as a way to have some fun while learning AngularJS. I'm a web developer in San Francisco.</p>
+					</div>
+				</div>
+			</script>
+			<p ng-controller="ModalDemoCtrl">
+				<a href="#" ng-click="open()">About</a>
+			</p>
 		</div>
 	</div>
-	<div id="saved-quotes" class='col-sm-6 text-center' ng-model="quotes" ng-controller="showQuotes">
-		<h1>Your Quotes</h1>
-		<div>
-			<ul>
-				<li ng-repeat="quote in quotes track by $index"><img ng-click="removeQuote($index)" src="static/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img>   {{quote}}</li>
-			</ul>
-	</div>
+	<script type="text/javascript">
+		var user_info = document.getElementById('user-data');
+		var oauth_token = user_info.getAttribute('data-oauth-token');
+		var oauth_token_secret = user_info.getAttribute('data-oauth-token-secret');
+		var twitter_handle = user_info.getAttribute('data-username');
+		localStorage.setItem('twitter_handle', twitter_handle);
+		localStorage.setItem('oauth_token', oauth_token);
+		localStorage.setItem('oauth_token_secret', oauth_token_secret);
+	</script>
 </body>
 </html>
+{% endverbatim %}
