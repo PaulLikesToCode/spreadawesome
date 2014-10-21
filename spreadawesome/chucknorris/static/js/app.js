@@ -92,9 +92,11 @@ app.controller('showQuotes', ['$scope', '$http', 'quotes', function($scope, $htt
 			}
 			$http.post('/send_tweet/', data).
 				success(function(data) {
+					// Do something else here, a timeout alert or something
 					console.log(data.message);
 				}).
 				error(function() {
+					// Do something else here, handle the error
 					console.log('sorry');
 				});
 		}

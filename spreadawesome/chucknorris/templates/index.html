@@ -67,7 +67,7 @@
 			<h1>Your Quotes</h1>
 			<div>
 				<ul>
-					<li ng-repeat="quote in quotes track by $index"><!--img ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img--><textarea class="form-control" id="tweet-textarea">{{quote}}</textarea><img id="delete-icon" ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img><span id="submit-tweet" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Tweet!</span></br>
+					<li ng-repeat="quote in quotes track by $index"><!--img ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img--><textarea ng-model="quotes[$index]" class="form-control" id="tweet-textarea"></textarea><img id="delete-icon" ng-click="removeQuote($index)" src="/static/images/erase.png" tooltip="{{dynamicTooltip}}" tooltip-placement="left"></img><span ng-click="tweetQuote($index)" id="submit-tweet" class="btn btn-block btn-social btn-twitter"><i class="fa fa-twitter"></i> Tweet!</span>
 
 						<!--span ng-click="tweetQuote($index)"> tweet! </span--></li>
 				</ul>
